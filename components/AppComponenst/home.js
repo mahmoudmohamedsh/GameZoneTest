@@ -50,8 +50,9 @@ export default function Home({ navigation }) {
   }
   function MyAsyncData(){
     
-    const todosItem= []
-    firebase.firestore().collection("todos").get().then((querySnapshot) => {
+    
+    firebase.firestore().collection("todos").onSnapshot((querySnapshot) => {
+      const todosItem= []
       querySnapshot.forEach((doc) => {
           todosItem.push({
             title :doc.data().title,
@@ -62,13 +63,14 @@ export default function Home({ navigation }) {
       });
       
       setTodos(todosItem)
+      console.log('todos ' ,todosItem)
   });
   }
+  
+   
   useEffect(() => {
     MyAsyncData()
   })
-   
-  
   
   const submitHandler = (titleName) => {
     if (titleName.length > 3) {
@@ -90,14 +92,16 @@ export default function Home({ navigation }) {
     }
 
   }
-  firebase.firestore().collection('todos').onSnapshot((doc)=>{
-    console.warn(doc.data());
-  })
+  
+      
+  
+
+  
   const pressHandler = (id,title,completed) => {
     firebase.firestore().collection('todos').doc(id).update({
       title:title,
       completed:!completed
-    }).then(()=>console.warn('done'))
+    }).then(()=>console.warn('completed change done'))
     
   }
   const ay5ra = (id) => {
@@ -110,7 +114,7 @@ export default function Home({ navigation }) {
   }
 
   return (
-
+    
     <TouchableWithoutFeedback onPress={() => {
       Keyboard.dismiss();
       console.log("Dismissed");
