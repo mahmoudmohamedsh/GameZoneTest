@@ -35,7 +35,7 @@ export default function Home({ navigation }) {
     },1000)
   })
 
-
+  var user = firebase.auth().currentUser;
   
  
 
@@ -51,7 +51,7 @@ export default function Home({ navigation }) {
   function MyAsyncData(){
     
     
-    firebase.firestore().collection("todos").onSnapshot((querySnapshot) => {
+    firebase.firestore().collection(`${user.email}`).onSnapshot((querySnapshot) => {
       const todosItem= []
       querySnapshot.forEach((doc) => {
           todosItem.push({
@@ -63,7 +63,7 @@ export default function Home({ navigation }) {
       });
       
       setTodos(todosItem)
-      console.log('todos ' ,todosItem)
+      
   });
   }
   
@@ -73,10 +73,12 @@ export default function Home({ navigation }) {
   })
   
   const submitHandler = (titleName) => {
+    console.log('iam in add')
+
     if (titleName.length > 3) {
      console.log(titleName);
      
-     firebase.firestore().collection('todos').add({
+     firebase.firestore().collection(`${user.email}`).add({
       title: titleName,
       completed: false
       
@@ -98,21 +100,25 @@ export default function Home({ navigation }) {
 
   
   const pressHandler = (id,title,completed) => {
-    firebase.firestore().collection('todos').doc(id).update({
+    console.log('iam in update')
+    firebase.firestore().collection(`${user.email}`).doc(id).update({
       title:title,
       completed:!completed
-    }).then(()=>console.warn('completed change done'))
+    })
+    // .then(()=>console.warn('completed change done'))
+    // .catch((e)=>console.error(e))
     
   }
   const ay5ra = (id) => {
-    firebase.firestore().collection('todos').doc(`${id}`).delete().then(() => {
+    console.log('iam in delete')
+    firebase.firestore().collection(`${user.email}`).doc(`${id}`).delete().then(() => {
       console.log("Document successfully deleted!");
   }).catch(function(error) {
       console.error("Error removing document: ", error);
   });
     
   }
-
+  ;
   return (
     
     <TouchableWithoutFeedback onPress={() => {
@@ -210,4 +216,3 @@ const styles = StyleSheet.create({
     backgroundColor: 'yellow'
   }
 });
-
